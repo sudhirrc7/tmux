@@ -1,0 +1,14 @@
+# Everforest Light
+BG=#fdf6e3
+SURFACE=#e6e2cc
+OVERLAY=#bdc3af
+FG=#5c6a72
+MUTED=#939f91
+ACCENT=#8da101
+RED=#f85552
+GREEN=#8da101
+YELLOW=#dfa000
+BLUE=#3a94c5
+MAGENTA=#df69ba
+CYAN=#35a77c
+ORANGE=#f57d26

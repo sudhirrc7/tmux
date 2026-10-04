@@ -1,0 +1,14 @@
+# Poimandres
+BG=#1b1e28
+SURFACE=#303340
+OVERLAY=#506477
+FG=#e4f0fb
+MUTED=#767c9d
+ACCENT=#5de4c7
+RED=#d0679d
+GREEN=#5de4c7
+YELLOW=#fffac2
+BLUE=#89ddff
+MAGENTA=#fcc5e9
+CYAN=#add7ff
+ORANGE=#fffac2

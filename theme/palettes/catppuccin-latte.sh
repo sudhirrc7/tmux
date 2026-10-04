@@ -1,0 +1,14 @@
+# Catppuccin Latte
+BG=#eff1f5
+SURFACE=#ccd0da
+OVERLAY=#bcc0cc
+FG=#4c4f69
+MUTED=#8c8fa1
+ACCENT=#8839ef
+RED=#d20f39
+GREEN=#40a02b
+YELLOW=#df8e1d
+BLUE=#1e66f5
+MAGENTA=#ea76cb
+CYAN=#179299
+ORANGE=#fe640b

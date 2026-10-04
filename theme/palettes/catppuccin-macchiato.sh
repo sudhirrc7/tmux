@@ -1,0 +1,14 @@
+# Catppuccin Macchiato
+BG=#24273a
+SURFACE=#363a4f
+OVERLAY=#494d64
+FG=#cad3f5
+MUTED=#8087a2
+ACCENT=#c6a0f6
+RED=#ed8796
+GREEN=#a6da95
+YELLOW=#eed49f
+BLUE=#8aadf4
+MAGENTA=#f5bde6
+CYAN=#8bd5ca
+ORANGE=#f5a97f

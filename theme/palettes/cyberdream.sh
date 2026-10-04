@@ -1,0 +1,15 @@
+# Cyberdream
+BG=#16181a
+SURFACE=#1e2124
+OVERLAY=#3c4048
+FG=#ffffff
+MUTED=#7b8496
+ACCENT=#5ea1ff
+RED=#ff6e5e
+GREEN=#5eff6c
+YELLOW=#f1ff5e
+BLUE=#5ea1ff
+MAGENTA=#bd5eff
+CYAN=#5ef1ff
+ORANGE=#ffbd5e
+COPY=#bd5eff

@@ -1,0 +1,15 @@
+# Carbonfox
+BG=#161616
+SURFACE=#2a2a2a
+OVERLAY=#404040
+FG=#f2f4f8
+MUTED=#7b7c7e
+ACCENT=#78a9ff
+RED=#ee5396
+GREEN=#25be6a
+YELLOW=#08bdba
+BLUE=#78a9ff
+MAGENTA=#be95ff
+CYAN=#33b1ff
+ORANGE=#3ddbd9
+COPY=#be95ff

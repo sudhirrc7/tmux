@@ -1,0 +1,14 @@
+# Catppuccin Mocha
+BG=#1e1e2e
+SURFACE=#313244
+OVERLAY=#45475a
+FG=#cdd6f4
+MUTED=#7f849c
+ACCENT=#cba6f7
+RED=#f38ba8
+GREEN=#a6e3a1
+YELLOW=#f9e2af
+BLUE=#89b4fa
+MAGENTA=#f5c2e7
+CYAN=#94e2d5
+ORANGE=#fab387

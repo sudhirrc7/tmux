@@ -1,0 +1,15 @@
+# Tokyo Night
+BG=#1a1b26
+SURFACE=#292e42
+OVERLAY=#3b4261
+FG=#c0caf5
+MUTED=#737aa2
+ACCENT=#7aa2f7
+RED=#f7768e
+GREEN=#9ece6a
+YELLOW=#e0af68
+BLUE=#7aa2f7
+MAGENTA=#bb9af7
+CYAN=#7dcfff
+ORANGE=#ff9e64
+COPY=#bb9af7
