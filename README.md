@@ -1,7 +1,7 @@
 # tmux config
 
 My tmux setup: a `C-a` prefix, vi copy mode, a handful of TPM plugins, and a
-self-contained theme engine with 37 colour themes and 13 separator styles that
+self-contained theme engine with 37 colour themes and 16 status bar styles that
 can be switched live from a popup picker. The last theme, style and transparency
 choice is remembered across tmux restarts.
 
@@ -125,6 +125,9 @@ highlights.
 | `arrow-reverse`  | Arrows pointing the other way           |
 | `flame`, `pixel`, `blocks`, `ice` | Decorative Nerd Font edges |
 | `straight`       | Plain flat blocks                       |
+| `minimal`        | Text only: no backgrounds, no glyphs; current window in the accent colour |
+| `dots`           | Text only, items split by `·`, windows marked `●` (current) and `○` |
+| `underline`      | Text only, the session and current window are underlined |
 
 ### Options
 

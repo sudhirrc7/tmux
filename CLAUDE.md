@@ -64,8 +64,14 @@ segment on its left), `T` (thin divider) and `INV`. Every segment edge goes thro
 `sep open|close <left colour> <right colour>`, never a hand-written `#[fg=..,bg=..]$L`,
 because inverted styles (`INV=1`: `bubble-concave`, `arrow-reverse`) draw the glyph in
 the neighbouring segment's colour. A new style is one `case` line in `glyphs` plus its
-name in `STYLES`. `round` and `flat` are kept as aliases of `bubble` and `straight`
-for old state files.
+name in `STYLES`.
+
+Text-only styles (`minimal`, `dots`, `underline`) set `MIN` in `glyphs` instead of
+glyphs; `render` then calls `render_minimal`, which builds `left`/`right`/`window`/
+`current` and `wsep` (window separator) without any segment backgrounds, and
+`style_sample` has a matching branch for the picker preview.
+
+`round` and `flat` are kept as aliases of `bubble` and `straight` for old state files.
 
 `stats.sh` is called through `#()` jobs in the status line. Up and down run as two
 separate jobs, so they share one network sample through a cache in

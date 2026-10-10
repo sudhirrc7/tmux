@@ -24,7 +24,7 @@ STYLE_FILE="$STATE_DIR/theme-style"
 TRANSPARENT_FILE="$STATE_DIR/theme-transparent"
 PREVIEW_STYLE_FILE="$STATE_DIR/theme-style.preview"
 GENERATED="$STATE_DIR/theme.conf"
-STYLES="slant slant-back trapezoid trapezoid-down bubble bubble-concave arrow arrow-reverse flame pixel blocks ice straight"
+STYLES="slant slant-back trapezoid trapezoid-down bubble bubble-concave arrow arrow-reverse flame pixel blocks ice straight minimal dots underline"
 
 mkdir -p "$STATE_DIR"
 
@@ -74,9 +74,10 @@ load_palette() {
 # Powerline glyphs, built from bytes so editors cannot mangle them.
 #   L: closes a segment toward the right, R: opens a segment from the left, T: thin divider
 #   INV: the glyph is drawn in the neighbouring segment's colour instead (reversed shapes)
+#   MIN: a text-only style with no segment backgrounds (see render_minimal)
 glyphs() {
   local b=$'\xee\x82' c=$'\xee\x83'
-  INV=''
+  INV='' MIN=''
   case $1 in
     slant-back)     L="$b"$'\xb8' R="$b"$'\xbe' T="$b"$'\xb9' ;;
     trapezoid)      L="$b"$'\xb8' R="$b"$'\xba' T='│' ;;
@@ -90,6 +91,7 @@ glyphs() {
     blocks)         L="$c"$'\x86' R="$c"$'\x87' T='│' ;;
     ice)            L="$c"$'\x88' R="$c"$'\x8a' T='│' ;;
     straight|flat)  L='' R='' T='│' ;;
+    minimal|dots|underline) L='' R='' T='' MIN=$1 ;;
     *)              L="$b"$'\xbc' R="$b"$'\xba' T="$b"$'\xbb' ;;
   esac
 }
@@ -113,8 +115,41 @@ sep() {
   echo "#[fg=$TF,bg=$TB]$TG"
 }
 
+# Text-only status line: colour and spacing instead of filled segments.
+render_minimal() {
+  local div='  ' badge="#{?client_prefix,󰌌 ,#{?pane_in_mode,󰆏 ,}}" mark='' zoom
+  zoom="#{?window_zoomed_flag,#[fg=$YELLOW] 󰁌,}"
+  case $MIN in
+    dots)
+      div="#[fg=$OVERLAY] · "
+      window="#[fg=$OVERLAY]○ #[fg=$MUTED]#W#{?window_zoomed_flag, 󰁌,}#{?window_bell_flag,#[fg=$RED] 󰂞,}"
+      current="#[fg=$ACCENT]● #[fg=$FG,bold]#W$zoom#[nobold]"
+      wsep='   '
+      ;;
+    underline)
+      mark=",underscore,us=$mode"
+      window="#[fg=$MUTED] #I #W#{?window_zoomed_flag, 󰁌,}#{?window_bell_flag,#[fg=$RED] 󰂞,} "
+      current="#[fg=$FG,bold,underscore,us=$ACCENT] #I #W$zoom #[nobold,nounderscore]"
+      wsep=' '
+      ;;
+    *)
+      window="#[fg=$MUTED]#I #W#{?window_zoomed_flag, 󰁌,}#{?window_bell_flag,#[fg=$RED] 󰂞,}"
+      current="#[fg=$ACCENT,bold]#I #[fg=$FG]#W$zoom#[nobold]"
+      wsep='   '
+      ;;
+  esac
+
+  left=" #[fg=$mode,bold$mark]$badge#S#[nobold,nounderscore]$div#[fg=$MUTED]%H:%M"
+  right="#[fg=$MUTED]%a %d %b$div#[fg=$ACCENT,bold]#h "
+  if [ "$show_stats" = on ]; then
+    left+="$div#($stats mem $levels)$div#($stats up ${MUTED#\#} ${FG#\#})"
+    right="#($stats down ${MUTED#\#} ${FG#\#})$div#($stats cpu $levels)$div$right"
+  fi
+}
+
 render() {
-  local name=$1 style=$2 bg stats levels mode icon host left right window current
+  local name=$1 style=$2 bg stats levels mode icon host left right window current show_stats
+  local wsep=' '
   load_palette "$name" || return 1
   glyphs "$style"
 
@@ -127,19 +162,25 @@ render() {
   host='󰒋'
   [ "$(uname -s)" = Darwin ] && host=''
 
-  left="#[fg=$ACCENT_FG,bg=$mode,bold] $icon #S #[nobold]$(sep close "$mode" "$SURFACE")"
-  left+="#[fg=$FG,bg=$SURFACE] 󰥔 %H:%M $(sep close "$SURFACE" "$bg")#[default] "
-  right=" $(sep open "$bg" "$SURFACE")#[fg=$FG,bg=$SURFACE] 󰃭 %a %d %b "
-  right+="$(sep open "$SURFACE" "$ACCENT")#[fg=$ACCENT_FG,bg=$ACCENT,bold] $host #h "
-  if [ "$(tmux_opt @theme_stats on)" = on ]; then
-    left+="#($stats mem $levels)  #($stats up ${MUTED#\#} ${FG#\#})"
-    right="#($stats down ${MUTED#\#} ${FG#\#})  #($stats cpu $levels)$right"
-  fi
+  show_stats=$(tmux_opt @theme_stats on)
 
-  window="#[fg=$MUTED,bg=$bg] #I #[fg=$OVERLAY]$T#[fg=$MUTED] #W"
-  window+="#{?window_zoomed_flag, 󰁌,}#{?window_bell_flag,#[fg=$RED] 󰂞,} "
-  current="$(sep open "$bg" "$ACCENT")#[fg=$ACCENT_FG,bg=$ACCENT,bold] #I #[nobold]$(sep close "$ACCENT" "$SURFACE")"
-  current+="#[fg=$FG,bg=$SURFACE,bold] #W#{?window_zoomed_flag,#[fg=$YELLOW] 󰁌,} #[nobold]$(sep close "$SURFACE" "$bg")"
+  if [ -n "$MIN" ]; then
+    render_minimal
+  else
+    left="#[fg=$ACCENT_FG,bg=$mode,bold] $icon #S #[nobold]$(sep close "$mode" "$SURFACE")"
+    left+="#[fg=$FG,bg=$SURFACE] 󰥔 %H:%M $(sep close "$SURFACE" "$bg")#[default] "
+    right=" $(sep open "$bg" "$SURFACE")#[fg=$FG,bg=$SURFACE] 󰃭 %a %d %b "
+    right+="$(sep open "$SURFACE" "$ACCENT")#[fg=$ACCENT_FG,bg=$ACCENT,bold] $host #h "
+    if [ "$show_stats" = on ]; then
+      left+="#($stats mem $levels)  #($stats up ${MUTED#\#} ${FG#\#})"
+      right="#($stats down ${MUTED#\#} ${FG#\#})  #($stats cpu $levels)$right"
+    fi
+
+    window="#[fg=$MUTED,bg=$bg] #I #[fg=$OVERLAY]$T#[fg=$MUTED] #W"
+    window+="#{?window_zoomed_flag, 󰁌,}#{?window_bell_flag,#[fg=$RED] 󰂞,} "
+    current="$(sep open "$bg" "$ACCENT")#[fg=$ACCENT_FG,bg=$ACCENT,bold] #I #[nobold]$(sep close "$ACCENT" "$SURFACE")"
+    current+="#[fg=$FG,bg=$SURFACE,bold] #W#{?window_zoomed_flag,#[fg=$YELLOW] 󰁌,} #[nobold]$(sep close "$SURFACE" "$bg")"
+  fi
 
   cat > "$GENERATED" <<EOF
 set -g @theme '$name'
@@ -151,7 +192,7 @@ set -g status-left-length 120
 set -g status-right-length 120
 set -g status-left '$left'
 set -g status-right '$right'
-set -g window-status-separator ' '
+set -g window-status-separator '$wsep'
 set -g window-status-style 'bg=$bg,fg=$MUTED'
 set -g window-status-current-style 'bg=$bg,fg=$FG'
 set -g window-status-activity-style 'bg=$bg,fg=$YELLOW'
@@ -250,6 +291,24 @@ ansi() {
 style_sample() {
   glyphs "$1"
   local line
+  if [ -n "$MIN" ]; then
+    case $MIN in
+      dots)
+        line=$(ansi "$ACCENT" "$BG" " main")$(ansi "$OVERLAY" "$BG" " · ")$(ansi "$MUTED" "$BG" "09:41     ")
+        line+=$(ansi "$ACCENT" "$BG" "● ")$(ansi "$FG" "$BG" "nvim   ")$(ansi "$OVERLAY" "$BG" "○ ")$(ansi "$MUTED" "$BG" "zsh ")
+        ;;
+      underline)
+        line=$(printf '\e[4m')$(ansi "$ACCENT" "$BG" " main")$(printf '\e[24m')$(ansi "$MUTED" "$BG" "  09:41     ")
+        line+=$(printf '\e[4m')$(ansi "$FG" "$BG" " 1 nvim ")$(printf '\e[24m')$(ansi "$MUTED" "$BG" "  2 zsh ")
+        ;;
+      *)
+        line=$(ansi "$ACCENT" "$BG" " main")$(ansi "$MUTED" "$BG" "  09:41     ")
+        line+=$(ansi "$ACCENT" "$BG" "1 ")$(ansi "$FG" "$BG" "nvim   ")$(ansi "$MUTED" "$BG" "2 zsh ")
+        ;;
+    esac
+    printf '%s\e[0m' "$line"
+    return
+  fi
   line=$(ansi "$ACCENT_FG" "$ACCENT" "  main ")
   transition close "$ACCENT" "$SURFACE"; line+=$(ansi "$TF" "$TB" "$TG")
   line+=$(ansi "$FG" "$SURFACE" " 󰥔 09:41 ")
