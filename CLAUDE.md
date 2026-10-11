@@ -66,10 +66,12 @@ because inverted styles (`INV=1`: `bubble-concave`, `arrow-reverse`) draw the gl
 the neighbouring segment's colour. A new style is one `case` line in `glyphs` plus its
 name in `STYLES`.
 
-Text-only styles (`minimal`, `dots`, `underline`) set `MIN` in `glyphs` instead of
-glyphs; `render` then calls `render_minimal`, which builds `left`/`right`/`window`/
-`current` and `wsep` (window separator) without any segment backgrounds, and
-`style_sample` has a matching branch for the picker preview.
+Text-only styles (`minimal`, `dots`, `underline`, `primeagen`) set `MIN` in `glyphs`
+instead of glyphs; `render` then calls `render_minimal`, which builds `left`/`right`/
+`window`/`current` and `wsep` (window separator) without any segment backgrounds, and
+`style_sample` has a matching branch for the picker preview. `primeagen` reproduces
+tmux's stock status formats (checked against `tmux -f /dev/null show -g ...`), sets
+`justify=left` and returns early from `render_minimal` with its own `left`/`right`.
 
 `round` and `flat` are kept as aliases of `bubble` and `straight` for old state files.
 
@@ -99,6 +101,11 @@ separate jobs, so they share one network sample through a cache in
 - Scripts must stay compatible with bash 3.2 (macOS `/bin/bash`): no associative arrays,
   no `${var,,}`, no `$'\u....'`.
 - The fzf pickers use `--with-shell 'bash -c'` because the user's `$SHELL` is fish.
+- **tmux 3.7 gives popups and menus a grey default** (`popup-style bg=themedarkgrey`),
+  so `render` must set `popup-style` and `menu-style` explicitly. The pickers also pass
+  fzf an explicit `bg:$BG` (never `-1`): live preview restyles the popup while fzf keeps
+  the colours of the theme it was opened with, so a transparent fzf background ends up
+  showing light text on a light theme's background.
 
 ## Conventions
 

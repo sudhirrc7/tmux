@@ -24,7 +24,7 @@ STYLE_FILE="$STATE_DIR/theme-style"
 TRANSPARENT_FILE="$STATE_DIR/theme-transparent"
 PREVIEW_STYLE_FILE="$STATE_DIR/theme-style.preview"
 GENERATED="$STATE_DIR/theme.conf"
-STYLES="slant slant-back trapezoid trapezoid-down bubble bubble-concave arrow arrow-reverse flame pixel blocks ice straight minimal dots underline"
+STYLES="slant slant-back trapezoid trapezoid-down bubble bubble-concave arrow arrow-reverse flame pixel blocks ice straight minimal dots underline primeagen"
 
 mkdir -p "$STATE_DIR"
 
@@ -91,7 +91,7 @@ glyphs() {
     blocks)         L="$c"$'\x86' R="$c"$'\x87' T='│' ;;
     ice)            L="$c"$'\x88' R="$c"$'\x8a' T='│' ;;
     straight|flat)  L='' R='' T='│' ;;
-    minimal|dots|underline) L='' R='' T='' MIN=$1 ;;
+    minimal|dots|underline|primeagen) L='' R='' T='' MIN=$1 ;;
     *)              L="$b"$'\xbc' R="$b"$'\xba' T="$b"$'\xbb' ;;
   esac
 }
@@ -120,6 +120,19 @@ render_minimal() {
   local div='  ' badge="#{?client_prefix,󰌌 ,#{?pane_in_mode,󰆏 ,}}" mark='' zoom
   zoom="#{?window_zoomed_flag,#[fg=$YELLOW] 󰁌,}"
   case $MIN in
+    primeagen)
+      # tmux's stock status line, as ThePrimeagen runs it, in the theme's colours
+      window="#[fg=$FG]#I:#W#{?window_flags,#{window_flags}, }"
+      current="#[fg=$FG,underscore]#I:#W#{?window_flags,#{window_flags}, }#[nounderscore]"
+      wsep=' '
+      justify=left
+      left="#[fg=#{?client_prefix,$PREFIX,#{?pane_in_mode,$COPY,$FG}}][#S] "
+      right="#[fg=$FG]#{?window_bigger,[#{window_offset_x}#,#{window_offset_y}] ,}\"#{=21:pane_title}\" %H:%M %d-%b-%y"
+      if [ "$show_stats" = on ]; then
+        right="#($stats mem $levels)  #($stats cpu $levels)  $right"
+      fi
+      return
+      ;;
     dots)
       div="#[fg=$OVERLAY] · "
       window="#[fg=$OVERLAY]○ #[fg=$MUTED]#W#{?window_zoomed_flag, 󰁌,}#{?window_bell_flag,#[fg=$RED] 󰂞,}"
@@ -149,7 +162,7 @@ render_minimal() {
 
 render() {
   local name=$1 style=$2 bg stats levels mode icon host left right window current show_stats
-  local wsep=' '
+  local wsep=' ' justify=absolute-centre
   load_palette "$name" || return 1
   glyphs "$style"
 
@@ -186,7 +199,7 @@ render() {
 set -g @theme '$name'
 set -g @theme_active_style '$style'
 set -g status-interval 2
-set -g status-justify absolute-centre
+set -g status-justify $justify
 set -g status-style 'bg=$bg,fg=$FG'
 set -g status-left-length 120
 set -g status-right-length 120
@@ -207,7 +220,8 @@ set -g mode-style 'bg=$OVERLAY,fg=$FG'
 set -g copy-mode-match-style 'bg=$SURFACE,fg=$YELLOW'
 set -g copy-mode-current-match-style 'bg=$YELLOW,fg=$ACCENT_FG'
 set -g copy-mode-mark-style 'bg=$MAGENTA,fg=$ACCENT_FG'
-set -g popup-border-style 'fg=$ACCENT'
+set -g popup-style 'bg=$bg,fg=$FG'
+set -g popup-border-style 'bg=$bg,fg=$ACCENT'
 set -g popup-border-lines rounded
 set -g menu-style 'bg=$BG,fg=$FG'
 set -g menu-selected-style 'bg=$ACCENT,fg=$ACCENT_FG'
@@ -293,6 +307,10 @@ style_sample() {
   local line
   if [ -n "$MIN" ]; then
     case $MIN in
+      primeagen)
+        line=$(ansi "$FG" "$BG" '[main] ')$(printf '\e[4m')$(ansi "$FG" "$BG" '1:nvim*')$(printf '\e[24m')
+        line+=$(ansi "$FG" "$BG" ' 2:zsh-        "host" 14:02 11-Oct-26 ')
+        ;;
       dots)
         line=$(ansi "$ACCENT" "$BG" " main")$(ansi "$OVERLAY" "$BG" " · ")$(ansi "$MUTED" "$BG" "09:41     ")
         line+=$(ansi "$ACCENT" "$BG" "● ")$(ansi "$FG" "$BG" "nvim   ")$(ansi "$OVERLAY" "$BG" "○ ")$(ansi "$MUTED" "$BG" "zsh ")
@@ -337,8 +355,8 @@ pick_style() {
         --with-shell 'bash -c' \
         --prompt '󰏘  ' --pointer '▌' --gutter ' ' \
         --header 'enter apply · esc cancel' --header-first \
-        --color "bg:-1,bg+:$SURFACE,fg:$MUTED,fg+:$FG,hl:$ACCENT,hl+:$ACCENT" \
-        --color "pointer:$ACCENT,prompt:$ACCENT,header:$MUTED,gutter:-1,separator:$OVERLAY" \
+        --color "bg:$BG,bg+:$SURFACE,fg:$MUTED,fg+:$FG,hl:$ACCENT,hl+:$ACCENT" \
+        --color "pointer:$ACCENT,prompt:$ACCENT,header:$MUTED,gutter:$BG,separator:$OVERLAY" \
         --bind "load:pos(${index:-1})" \
         --bind "focus:execute-silent('$SELF' preview-style {1})"
   )
@@ -378,8 +396,8 @@ pick() {
         --with-shell 'bash -c' \
         --prompt '󰏘  ' --pointer '▌' --gutter ' ' \
         --header "$(picker_header)" --header-first \
-        --color "bg:-1,bg+:$SURFACE,fg:$MUTED,fg+:$FG,hl:$ACCENT,hl+:$ACCENT" \
-        --color "pointer:$ACCENT,prompt:$ACCENT,header:$MUTED,gutter:-1,separator:$OVERLAY" \
+        --color "bg:$BG,bg+:$SURFACE,fg:$MUTED,fg+:$FG,hl:$ACCENT,hl+:$ACCENT" \
+        --color "pointer:$ACCENT,prompt:$ACCENT,header:$MUTED,gutter:$BG,separator:$OVERLAY" \
         --bind "load:pos(${index:-1})" \
         --bind "focus:execute-silent('$SELF' preview {1})" \
         --bind "ctrl-s:execute-silent('$SELF' next-style {1})+transform-header('$SELF' header)"

@@ -1,7 +1,7 @@
 # tmux config
 
 My tmux setup: a `C-a` prefix, vi copy mode, a handful of TPM plugins, and a
-self-contained theme engine with 37 colour themes and 16 status bar styles that
+self-contained theme engine with 38 colour themes and 17 status bar styles that
 can be switched live from a popup picker. The last theme, style and transparency
 choice is remembered across tmux restarts.
 
@@ -110,6 +110,7 @@ highlights.
 | Ayu          | `ayu-dark`, `ayu-mirage` |
 | My own       | `farblue`, `farblue-midnight` (from `~/personal/farblue.nvim`), `neonprism` (from `~/personal/neonprism.nvim`) |
 | Others       | `nord`, `onedark`, `dracula`, `solarized-dark`, `nightfox`, `carbonfox`, `oxocarbon`, `monokai-pro`, `sonokai`, `cyberdream`, `poimandres` |
+| ThePrimeagen | `primeagen` (his `bg=#333333 fg=#5eacd3`; pair it with the `primeagen` style for his exact bar) |
 
 ### Styles
 
@@ -128,6 +129,7 @@ highlights.
 | `minimal`        | Text only: no backgrounds, no glyphs; current window in the accent colour |
 | `dots`           | Text only, items split by `·`, windows marked `●` (current) and `○` |
 | `underline`      | Text only, the session and current window are underlined |
+| `primeagen`      | tmux's stock layout as ThePrimeagen runs it: `[session] 1:zsh* 2:nvim-` left-aligned, `"host" 14:02 11-Oct-26` on the right |
 
 ### Options
 

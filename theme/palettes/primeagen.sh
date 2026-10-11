@@ -1,0 +1,16 @@
+# ThePrimeagen (status-style 'bg=#333333 fg=#5eacd3' from his dotfiles)
+BG=#333333
+SURFACE=#444444
+OVERLAY=#5a5a5a
+FG=#5eacd3
+MUTED=#4a87a6
+ACCENT=#5eacd3
+RED=#e06c75
+GREEN=#98c379
+YELLOW=#e5c07b
+BLUE=#5eacd3
+MAGENTA=#c678dd
+CYAN=#56b6c2
+ORANGE=#d19a66
+ACCENT_FG=#333333
+COPY=#c678dd
